@@ -1,4 +1,5 @@
-﻿using System;
+﻿using csharp_react.Data.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,5 +10,6 @@ namespace csharp_react.Services.Repositories
     public interface ICapstoneRepository
     {
         Task<object> GetAllItems();
+        Task<object> AddNewItem(Items item);
     }
 }

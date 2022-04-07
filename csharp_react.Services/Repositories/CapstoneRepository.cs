@@ -16,11 +16,16 @@ namespace csharp_react.Services.Repositories
             _context = context;
         }
 
+        public async Task<object> AddNewItem(Items item)
+        {
+            await _context.AddAsync(item);
+            await _context.SaveChangesAsync();
+            return new { ok = true };
+        }
+
         public async Task<object> GetAllItems()
         {
-            var items = await _context.Users.ToListAsync();
-            Console.Write(items);
-            throw new NotImplementedException();
+            return await _context.Items.ToListAsync();
         }
     }
 }
