@@ -18,9 +18,16 @@ namespace csharp_react.Services.Repositories
 
         public async Task<object> AddNewItem(Items item)
         {
-            await _context.AddAsync(item);
+            await _context.Items.AddAsync(item);
             await _context.SaveChangesAsync();
             return new { ok = true };
+        }
+
+        public async Task<object> CreateNewTransaction(Transactions transactions)
+        {
+            await _context.Transactions.AddAsync(transactions);
+            await _context.SaveChangesAsync();
+            return new { ok = true};
         }
 
         public async Task<object> GetAllItems()

@@ -11,5 +11,7 @@ namespace csharp_react.Services.Repositories
     {
         Task<object> GetAllItems();
         Task<object> AddNewItem(Items item);
+
+        Task<object> CreateNewTransaction(Transactions transactions);
     }
 }
