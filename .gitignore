@@ -1,5 +1,5 @@
-csharp_react.Services/bin/
-csharp_react.Services/obj/
+/csharp_react.Services/bin/
+/csharp_react.Services/obj/
 
-csharp_react.Data/bin/
-csharp_react.Data/obj/
+/csharp_react.Data/bin/
+/csharp_react.Data/obj/
