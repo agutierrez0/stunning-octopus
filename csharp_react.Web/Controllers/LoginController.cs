@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using csharp_react.Services.Repositories;
 using csharp_react.Web.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace csharp_react.Controllers
 {
@@ -22,8 +19,9 @@ namespace csharp_react.Controllers
         [HttpPost]
         public async Task<ActionResult<object>> LoginUser([FromBody] LoginBody body)
         {
-            Console.WriteLine(body);
-            return Ok(await _repository.GetAllItems());
+            Console.WriteLine(body.EmployeeId);
+            Console.WriteLine(body.Passcode);
+            return NotFound();
         }
     }
 }
