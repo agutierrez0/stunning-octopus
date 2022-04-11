@@ -3,37 +3,52 @@ import './css/start.css';
 
 export default function Start() {
     const [loading, setLoading] = useState(false);
-
     const [enteredId, setEnteredId] = useState([])
     const [enteredPasscode, setEnteredPasscode] = useState([])
 
-    const [currentIdIndex, setCurrentIdIndex] = useState(0);
-    const [currentPasscodeIndex, setCurrentPasscodeIndex] = useState(0);
-
     function handleNewNumber(isId, number) {
         if (isId) {
-            setCurrentIdIndex(currentIdIndex + 1)
             setEnteredId(oldArray => [...oldArray, number])
         } else {
-            setCurrentPasscodeIndex(currentPasscodeIndex + 1)
             setEnteredPasscode(oldArray => [...oldArray, number])
         }
     }
 
     function handleBackSpace(isId) {
         if (isId) {
-            setCurrentIdIndex(currentIdIndex - 1)
             enteredId.pop()
         } else {
-            setCurrentPasscodeIndex(currentPasscodeIndex - 1)
             enteredPasscode.pop()
         }
     }
 
     function handleGo() {
-        console.log(enteredId)
-        console.log(enteredPasscode)
+        setLoading(true)
+        const finalId = enteredId.join('')
+        const finalPasscode = enteredPasscode.join('')
+        const item = { employeeId: finalId, passcode: finalPasscode}
+        
+        fetch("/api/login", {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(item)
+        })
+        .then(res => {
+            if (res.status === 200) {
+                sessionStorage.setItem('employeeId', finalId)
+                window.location.href = "/platform"
+            } else {
+                setEnteredId([])
+                setEnteredPasscode([])
+                alert('invalid passcode and/or password')
+                setLoading(false)
+            }
+        })
     }
+
     return loading ? <div>loading...</div> : <div className="start-container">
         <div className="id-input-section">
             <div className="title-section">
@@ -167,8 +182,8 @@ export default function Start() {
                             0
                         </div>
 
-                        <div className="keypad-number" style={enteredPasscode.length == 4 ? {backgroundColor: 'green'} : {backgroundColor: 'transparent'}} onClick={handleGo}>
-                            {enteredPasscode.length == 4 ? "GO" : null}
+                        <div className="keypad-number" style={enteredPasscode.length == 4 && enteredId.length == 4 ? {backgroundColor: 'green'} : {backgroundColor: 'transparent'}} onClick={handleGo}>
+                            {enteredPasscode.length == 4 && enteredId.length == 4 ? "GO" : null}
                         </div>
                     </div>
                     
