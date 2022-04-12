@@ -7,7 +7,7 @@
 .select-panel-section {
     height: 100vh;
     width: 30vw;
-    background-color: purple;
+    background-color: darkslategrey;
 }
 
 .panel-section {
@@ -18,5 +18,10 @@
 .panel-option {
     height: 15vh;
     margin: 15px;
-    background-color: darksalmon;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 4vw;
+    background-color: white;
+    border: solid black 1px
 }

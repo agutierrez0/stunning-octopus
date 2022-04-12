@@ -8,6 +8,11 @@ export default function Platform() {
     const [isAdmin, setIsAdmin] = useState(false);
     const [selectedOption, setSelectedOption] = useState(0);
 
+    function handleLogOut() {
+        sessionStorage.clear()
+        window.location.href = "/"
+    }
+
     return (<div className="platform-container">
         <div className="select-panel-section">
             <div onClick={() => setSelectedOption(0)} className="panel-option">
@@ -15,6 +20,9 @@ export default function Platform() {
             </div>
             <div onClick={() => setSelectedOption(1)} className="panel-option">
                 Transactions
+            </div>
+            <div onClick={handleLogOut} className="panel-option" style={{backgroundColor: 'red'}}>
+                Log Out
             </div>
             {isAdmin ? <div onClick={() => setIsAdmin(true)} className="panel-option">
                 Admin

@@ -47,9 +47,22 @@ export default function Order() {
             <button onClick={() => handleSelection(i, false)} style={{margin: '5px'}}>decrease</button>
             {getCurrentCount(i)}
         </div>)}
+        {items.map((item, i) => <div className="order-item">
+            {item.name}
+            {item.emoji}
+            <button onClick={() => handleSelection(i, true)} style={{margin: '5px'}}>increase</button>
+            <button onClick={() => handleSelection(i, false)} style={{margin: '5px'}}>decrease</button>
+            {getCurrentCount(i)}
+        </div>)}
     </div>
     <div className="order-buttons">
-        Review Order
+        <div style={{display:'flex', justifyContent:'flex-end'}}>
+            <div style={{display:'flex', flexDirection:'column'}}>
+            <button>Review Order</button>
+            {/*<button>Restart Order</button>*/}
+            </div>
+            
+        </div>
     </div>
 </div>)
 }
