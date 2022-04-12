@@ -1,0 +1,29 @@
+.order-container {
+    height: 100vh;
+}
+
+.order-title {
+    height: 10vh;
+    width: 70vw;   
+    background-color: aqua;
+    font-size: 4vw;
+}
+
+.order-items {
+    height: 75vh;
+}
+
+.order-buttons {
+    height: 15vh;
+    width: 70vw;
+}
+
+.order-item {
+    height: 7.5vh;
+    width: 30vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: blueviolet;
+    margin: 15px;
+}

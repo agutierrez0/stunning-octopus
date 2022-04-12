@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Transaction from './transaction';
+import Transactions from './transactions';
 import Order from './order';
 import Admin from './admin';
 import './css/platform.css';
@@ -16,13 +16,13 @@ export default function Platform() {
             <div onClick={() => setSelectedOption(1)} className="panel-option">
                 Transactions
             </div>
-            {isAdmin ? <div onClick={() => setSelectedOption(2)} className="panel-option">
+            {isAdmin ? <div onClick={() => setIsAdmin(true)} className="panel-option">
                 Admin
             </div> : null}
         </div>
         <div className="panel-section">
             {selectedOption === 0 ? <Order /> : null}
-            {selectedOption === 1 ? <Transaction /> : null}
+            {selectedOption === 1 ? <Transactions /> : null}
             {selectedOption === 2 ? <Admin /> : null}
         </div>
     </div>)
