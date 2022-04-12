@@ -34,5 +34,20 @@ namespace csharp_react.Services.Repositories
         {
             return await _context.Items.ToListAsync();
         }
+
+        public Task<object> LoginUser(object item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<object> LogUserOut(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<object> UpdateItem(Items item)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

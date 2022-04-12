@@ -21,7 +21,14 @@ namespace csharp_react.Controllers
         {
             Console.WriteLine(body.EmployeeId);
             Console.WriteLine(body.Passcode);
-            return NotFound();
+            return await _repository.LoginUser(body);
+            // dont forget to "punch in" whenever this method is called
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<object>> Logout([FromBody] int id)
+        {
+            return await _repository.LogUserOut(id);
         }
     }
 }
