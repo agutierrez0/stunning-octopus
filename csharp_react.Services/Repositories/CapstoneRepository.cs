@@ -38,6 +38,10 @@ namespace csharp_react.Services.Repositories
             {
                 await _context.TransactionPurchases.AddAsync(new TransactionPurchases { ItemId = item.ItemId, TransactionId = id, ItemQuantity = item.ItemAmount });
                 await _context.SaveChangesAsync();
+
+                var itemPurchased = await _context.Items.FindAsync(item.ItemId);
+                itemPurchased.Quantity -= item.ItemAmount;
+                await _context.SaveChangesAsync();
             }
 
             return true;
@@ -46,9 +50,16 @@ namespace csharp_react.Services.Repositories
         public async Task<object> DeleteItem(int id)
         {
             var deletedEntity = await _context.Items.FindAsync(id);
-            _context.Items.Remove(deletedEntity);
-
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Items.Remove(deletedEntity);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                deletedEntity.Quantity = 0;
+                await _context.SaveChangesAsync();
+            }
 
             return true;
         }

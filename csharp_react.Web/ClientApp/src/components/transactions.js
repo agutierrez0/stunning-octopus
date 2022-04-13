@@ -24,9 +24,9 @@ export default function Transactions() {
                     <th>Transaction ID</th>
                     <th>Employee ID</th>
                     <th>Time</th>
-                    <th>Total</th>
-                    <th>Tax</th>
                     <th>Subtotal</th>
+                    <th>Tax</th>
+                    <th>Total</th>
                 </tr>
             </thead>
             <tbody>
