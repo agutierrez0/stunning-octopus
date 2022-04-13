@@ -5,7 +5,7 @@ import Admin from './admin';
 import './css/platform.css';
 
 export default function Platform() {
-    const [isAdmin, setIsAdmin] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(true);
     const [selectedOption, setSelectedOption] = useState(0);
 
     function handleLogOut() {
@@ -24,7 +24,7 @@ export default function Platform() {
             <div onClick={handleLogOut} className="panel-option" style={{backgroundColor: 'red'}}>
                 Log Out
             </div>
-            {isAdmin ? <div onClick={() => setIsAdmin(true)} className="panel-option">
+            {isAdmin ? <div onClick={() => setSelectedOption(2)} className="panel-option" style={{backgroundColor: 'yellow'}}>
                 Admin
             </div> : null}
         </div>
