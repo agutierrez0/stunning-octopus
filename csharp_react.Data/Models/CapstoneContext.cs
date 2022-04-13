@@ -75,13 +75,13 @@ namespace csharp_react.Data.Models
                     .WithMany(p => p.TransactionPurchases)
                     .HasForeignKey(d => d.ItemId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Transacti__ItemI__2D27B809");
+                    .HasConstraintName("FK__Transacti__ItemI__36B12243");
 
                 entity.HasOne(d => d.Transaction)
                     .WithMany(p => p.TransactionPurchases)
                     .HasForeignKey(d => d.TransactionId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Transacti__Trans__2E1BDC42");
+                    .HasConstraintName("FK__Transacti__Trans__37A5467C");
             });
 
             modelBuilder.Entity<Transactions>(entity =>

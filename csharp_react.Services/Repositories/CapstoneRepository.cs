@@ -21,14 +21,25 @@ namespace csharp_react.Services.Repositories
         {
             await _context.Items.AddAsync(item);
             await _context.SaveChangesAsync();
-            return new { ok = true };
+            return true;
         }
 
-        public async Task<object> CreateNewTransaction(Transactions transactions)
+        public async Task<object> CreateNewTransaction(TransactionBody transaction)
         {
-            await _context.Transactions.AddAsync(transactions);
+            var tax = double.Parse(transaction.Total) * .0875;
+            var subTotal = double.Parse(transaction.Total) + tax;
+            var myObject = new Transactions { EmployeeId = transaction.EmployeeId, Total = transaction.Total, Tax = tax.ToString(), Subtotal = subTotal.ToString(), Time = DateTime.Now };
+            await _context.Transactions.AddAsync(myObject);
             await _context.SaveChangesAsync();
-            return new { ok = true };
+
+            var id = myObject.ID;
+            foreach(var item in transaction.Items)
+            {
+                await _context.TransactionPurchases.AddAsync(new TransactionPurchases { ItemId = item.ItemId, TransactionId = id, ItemQuantity = item.ItemAmount });
+                await _context.SaveChangesAsync();
+            }
+
+            return true;
         }
 
         public async Task<object> GetAllItems()

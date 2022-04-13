@@ -13,7 +13,7 @@ namespace csharp_react.Services.Repositories
         Task<object> GetAllItems();
         Task<object> AddNewItem(Items item);
         Task<object> UpdateItem(Items item);
-        Task<object> CreateNewTransaction(Transactions transactions);
+        Task<object> CreateNewTransaction(TransactionBody transaction);
         Task<bool> LoginUser(LoginBody body);
         Task<object> LogUserOut(int id, DateTime clockInTime);
     }

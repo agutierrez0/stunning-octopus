@@ -31,10 +31,10 @@ namespace csharp_react.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<object>> Logout([FromBody] DateTime clockInTime, [FromRoute] int id)
+        public async Task<ActionResult<object>> Logout()
         {
-            await _repository.LogUserOut(id, clockInTime);
-            return Ok();
+            //await _repository.LogUserOut(id, clockInTime);
+            return Ok(DateTime.Now.ToString());
         }
     }
 }
