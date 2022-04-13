@@ -1,4 +1,5 @@
 ﻿using csharp_react.Data.Models;
+using csharp_react.Services.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace csharp_react.Services.Repositories
         Task<object> AddNewItem(Items item);
         Task<object> UpdateItem(Items item);
         Task<object> CreateNewTransaction(Transactions transactions);
-        Task<object> LoginUser(object item);
-        Task<object> LogUserOut(int id);
+        Task<bool> LoginUser(LoginBody body);
+        Task<object> LogUserOut(int id, DateTime clockInTime);
     }
 }

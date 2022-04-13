@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using csharp_react.Services.Repositories;
-using csharp_react.Web.Models;
+using csharp_react.Services.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace csharp_react.Controllers
@@ -19,16 +19,22 @@ namespace csharp_react.Controllers
         [HttpPost]
         public async Task<ActionResult<object>> LoginUser([FromBody] LoginBody body)
         {
-            Console.WriteLine(body.EmployeeId);
-            Console.WriteLine(body.Passcode);
-            return await _repository.LoginUser(body);
-            // dont forget to "punch in" whenever this method is called
+            var result = await _repository.LoginUser(body);
+            if (result)
+            {
+                return Ok();
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
 
-        [HttpPost]
-        public async Task<ActionResult<object>> Logout([FromBody] int id)
+        [HttpPut]
+        public async Task<ActionResult<object>> Logout([FromBody] DateTime clockInTime, [FromRoute] int id)
         {
-            return await _repository.LogUserOut(id);
+            await _repository.LogUserOut(id, clockInTime);
+            return Ok();
         }
     }
 }

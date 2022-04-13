@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using csharp_react.Data.Models;
 using csharp_react.Services.Repositories;
-using csharp_react.Web.Models;
+using csharp_react.Services.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 

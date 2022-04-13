@@ -1,4 +1,5 @@
 ﻿using csharp_react.Data.Models;
+using csharp_react.Services.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace csharp_react.Services.Repositories
         {
             await _context.Transactions.AddAsync(transactions);
             await _context.SaveChangesAsync();
-            return new { ok = true};
+            return new { ok = true };
         }
 
         public async Task<object> GetAllItems()
@@ -35,14 +36,16 @@ namespace csharp_react.Services.Repositories
             return await _context.Items.ToListAsync();
         }
 
-        public Task<object> LoginUser(object item)
+        public async Task<bool> LoginUser(LoginBody body)
         {
-            throw new NotImplementedException();
+            var matchingUser = await _context.Users.FirstOrDefaultAsync(c => c.EmployeeId == body.EmployeeId);
+            return matchingUser != null && matchingUser.Passcode == body.Passcode;
         }
 
-        public Task<object> LogUserOut(int id)
+        public async Task<object> LogUserOut(int id, DateTime clockInTime)
         {
-            throw new NotImplementedException();
+            await _context.EmployeeHours.AddAsync(new EmployeeHours {  ClockInTime = clockInTime, ClockOutTime = DateTime.Now, EmployeeId = id });
+            return 1;
         }
 
         public Task<object> UpdateItem(Items item)
