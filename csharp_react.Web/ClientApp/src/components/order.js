@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useTransition } from 'react';
+import React, { useEffect, useState } from 'react';
 import './css/order.css';
 
 export default function Order() {
@@ -10,6 +10,7 @@ export default function Order() {
     const [total, setTotal] = useState(0)
     const [tax, setTax] = useState(0)
     const [subTotal, setSubTotal] = useState(0)
+    const [postBody, setPostBody] = useState({})
 
     function handleSelection(index, isIncrease) {
         if (index in currentOrder) {
@@ -22,7 +23,7 @@ export default function Order() {
                 }
             }
         } else {
-            currentOrder[index] = 1
+            if (isIncrease) currentOrder[index] = 1
         }
 
         setCurrentOrder(currentOrder)
@@ -39,12 +40,15 @@ export default function Order() {
 
     function handleGoCheckout() {
         const someList = []
+        const someOtherList = []
         console.log(currentOrder)
         var totalAmount = 0
         for (const key in currentOrder) {
             console.log(key)
-            const entity = {name: items[key].name, value : currentOrder[key], total : currentOrder[key] * items[key].price, price: items[key].price} 
+            const entity = { name: items[key].name, value : currentOrder[key], total : currentOrder[key] * items[key].price, price: items[key].price } 
+            const simpleEntity = { itemId: items[key].id, itemAmount : currentOrder[key] }
             someList.push(entity)
+            someOtherList.push(simpleEntity)
             totalAmount = totalAmount + entity.total
         }
 
@@ -55,6 +59,8 @@ export default function Order() {
 
         console.log(someList)
         setOrderList(someList)
+        console.log(someOtherList)
+        setPostBody(someOtherList)
         setIsCheckout(true)
     }
 
@@ -62,34 +68,25 @@ export default function Order() {
         const employeeId = sessionStorage.getItem('employeeId')
         const datetimeNow = new Date().toISOString()
 
-        /* 
-        fetch("/api/transactions", {
+        const entity = { employeeId: employeeId, time: datetimeNow, total: total.toString(), subTotal, tax, items: postBody }
+        console.log(entity)
+        
+        fetch("/api/transaction", {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(item)
+            body: JSON.stringify(entity)
         })
-        .then(res => {
-            if (res.status === 200) {
-                sessionStorage.setItem('employeeId', finalId)
-                window.location.href = "/platform"
-            } else {
-                setEnteredId([])
-                setEnteredPasscode([])
-                alert('invalid passcode and/or password')
-                setLoading(false)
-            }
-        })
-        */
+        .then(res => res)
+        .then(data => console.log(data))
     }
 
     useEffect(() => {
-        setItems([{name: 'apples', emoji: '🍎', price: 2}, {name: 'oranges', emoji: '🍊', price: 1}, {name: 'grapes', emoji: '🍇', price: 4}])
+        //setItems([{name: 'apples', emoji: '🍎', price: 2}, {name: 'oranges', emoji: '🍊', price: 1}, {name: 'grapes', emoji: '🍇', price: 4}])
 
-        /*
-        fetch("/api/items", {
+        fetch("/api/item", {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -98,9 +95,9 @@ export default function Order() {
         })
         .then(res => res.json())
         .then(data => {
+            console.log(data)
             setItems(data)
         })
-         */
     }, [])
 
     return (<div className="order-container">
@@ -141,7 +138,7 @@ export default function Order() {
             <div className="order-items">
                 {items.map((item, i) => <div className="order-item">
                     {item.name}
-                    {item.emoji}
+                    {/* image */}
                     <button onClick={() => handleSelection(i, true)} style={{margin: '5px'}}>increase</button>
                     <button onClick={() => handleSelection(i, false)} style={{margin: '5px'}}>decrease</button>
                     {getCurrentCount(i)}

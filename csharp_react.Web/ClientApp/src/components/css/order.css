@@ -6,7 +6,7 @@
     height: 10vh;
     width: 70vw;   
     background-color: aqua;
-    font-size: 4vw;
+    font-size: calc(2vw + 2vh);
 }
 
 .order-items {
