@@ -11,6 +11,32 @@ import dollar20 from '../change_pics/20dollar.jpeg';
 import dollar50 from '../change_pics/50dollar.jpeg';
 import dollar100 from '../change_pics/100dollar.jpeg';
 
+import chips from '../item_pics/chips.jpeg';
+import chocolateCake from '../item_pics/chocolate_cake.jpeg';
+import chocolate from '../item_pics/chocolate.jpeg';
+import cookies from '../item_pics/cookies.jpeg';
+import deli from '../item_pics/deli.jpeg';
+import donuts from '../item_pics/donuts.jpeg';
+import fruits from '../item_pics/fruits.jpeg';
+import granolaBar from '../item_pics/granola_bar.jpeg';
+import muffins from '../item_pics/muffins.jpeg';
+import sodaBottle from '../item_pics/soda_bottle.jpeg';
+import sodaCan from '../item_pics/soda_can.jpeg';
+
+const locations = {
+    chips,
+    "chocolate cake" : chocolateCake,
+    chocolate,
+    cookies,
+    deli,
+    donuts,
+    fruits,
+    "granola bar" : granolaBar,
+    muffins,
+    "soda bottles" : sodaBottle,
+    "soda cans" : sodaCan
+}
+
 export default function Order() {
     const [isCheckout, setIsCheckout] = useState(false);
     const [isChangeScreen, setIsChangeScreen] = useState(false);
@@ -110,7 +136,6 @@ export default function Order() {
     function handleCheckout() {
         const employeeId = sessionStorage.getItem('employeeId')
         const datetimeNow = new Date().toISOString()
-
         const entity = { employeeId: employeeId, time: datetimeNow, total: total.toString(), subTotal, tax, items: postBody }
         
         fetch("/api/transaction", {
@@ -139,7 +164,6 @@ export default function Order() {
             setItems(data)
         })
     }, [])
-
 
     function calculateChange(amt, prv) {
         amt = 25.22
@@ -171,9 +195,7 @@ export default function Order() {
     }
 
     return (<div className="order-container">
-        <div className="order-title">
-                Order
-        </div>
+        <h4>Order</h4>
         {isChangeScreen ? <div> 
             {s.map((item,i) => {
                 if (change[item]) {
@@ -181,7 +203,7 @@ export default function Order() {
                 }
             })}
         </div> : null}
-        {isCheckout ? <div>
+        {isCheckout ? <div style={{width: '65vw'}}>
             <table>
                 <thead>
                     <tr>
@@ -206,32 +228,45 @@ export default function Order() {
                 <p>Total: ${total}</p>
                 <p>Tax: ${tax}</p>
                 <p>Subtotal: ${subTotal}</p>
-
-
                 <button onClick={handleCheckout}>check out with credit card</button>
-
                 <label>Cash provided</label>
                 <button onClick={calculateChange}>calculate change</button>
             </div>
         </div> : null}
 
-        {isInitialScreen ? <div>
-            <div className="order-items">
-                {items.map((item, i) => <div className="order-item">
-                    {item.name}
-                    {/* image */}
-                    <button onClick={() => handleSelection(i, true)} style={{margin: '5px'}}>increase</button>
-                    <button onClick={() => handleSelection(i, false)} style={{margin: '5px'}}>decrease</button>
-                    {getCurrentCount(i)}
-                </div>)}
-            </div>
-            <div className="order-buttons">
-                <div style={{display:'flex', justifyContent:'flex-end'}}>
-                    <div style={{display:'flex', flexDirection:'column'}}>
+        {isInitialScreen ? <>
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Picture</th>
+                            <th>Name</th>
+                            <th>Inventory Quantity</th>
+                            <th>Price</th>
+                            <th>Order Quantity</th>
+                            <th>Increase</th>
+                            <th>Decrease</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    {items.map((item, i) => <tr>
+                        <td>{item.id}</td>
+                        <td><img src={locations[item.name]} alt={item.name} style={{height: "60%", width: "60%"}} /></td>
+                        <td>{item.name}</td>
+                        <td>{item.quantity}</td>
+                        <td>{item.price}</td>
+                        <td>{getCurrentCount(i)}</td>
+                        <td><button onClick={() => handleSelection(i, true)}>Increase</button></td>
+                        <td><button onClick={() => handleSelection(i, false)}>Decrease</button></td>
+                    </tr>)}
+                    </tbody>
+                </table>
+                <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '15px'}}>
                     <button onClick={handleGoCheckout}>Review Order</button>
-                    </div>
                 </div>
             </div>
-        </div> : null}
+        </> : null}
 </div>)
 }
