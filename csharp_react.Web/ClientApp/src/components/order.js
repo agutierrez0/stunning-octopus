@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import './css/order.css';
+import penny from '../change_pics/penny.png';
+import nickel from '../change_pics/nickel.png';
+import dime from '../change_pics/dime.png';
+import quarter from '../change_pics/quarter.png';
+import dollar1 from '../change_pics/1dollar.jpeg';
+import dollar5 from '../change_pics/5dollar.jpeg';
+import dollar10 from '../change_pics/10dollar.jpeg';
+import dollar20 from '../change_pics/20dollar.jpeg';
+import dollar50 from '../change_pics/50dollar.jpeg';
+import dollar100 from '../change_pics/100dollar.jpeg';
 
 export default function Order() {
     const [isCheckout, setIsCheckout] = useState(false);
@@ -31,6 +41,21 @@ export default function Order() {
         .05 : "nickel",
         .01 : "penny"
     }
+
+    const imageMap = {
+        100 : dollar100,
+        50 : dollar50,
+        20 : dollar20,
+        10 : dollar10,
+        5 : dollar5,
+        1 : dollar1,
+        .25 : quarter,
+        .10 : dime,
+        .05 : nickel,
+        .01 : penny
+    }
+
+    const s = [100, 50, 20, 10, 5, 1, .25, .10, .05, .01]
     
     function handleSelection(index, isIncrease) {
         if (index in currentOrder) {
@@ -61,7 +86,6 @@ export default function Order() {
     function handleGoCheckout() {
         const someList = []
         const someOtherList = []
-        console.log(currentOrder)
         var totalAmount = 0
         for (const key in currentOrder) {
             console.log(key)
@@ -80,6 +104,7 @@ export default function Order() {
         setOrderList(someList)
         setPostBody(someOtherList)
         setIsCheckout(true)
+        setIsInitialScreen(false)
     }
 
     function handleCheckout() {
@@ -122,8 +147,8 @@ export default function Order() {
         amt = 25.22
         prv = 40
         let diff = prv - amt
-        const s = [100, 50, 20, 10, 5, 1, .25, .10, .05, .01]
         const given = []
+        const obj = {}
         
         for(var i = 0; i < s.length; i++) {
             if (s[i] < diff) {
@@ -132,16 +157,32 @@ export default function Order() {
                 i--;
             }
         }
-        setChange(given)
-        isCheckout(false)
-        isChangeScreen(true)
+
+        for (const item of given) {
+            if (obj[item]) {
+                obj[item]++
+            } else {
+                obj[item] = 1
+            }
+        }
+
+        console.log(obj)
+        setChange(obj)
+        setIsCheckout(false)
+        setIsChangeScreen(true)
     }
 
     return (<div className="order-container">
         <div className="order-title">
                 Order
         </div>
-        {isChangeScreen ? <div></div> : null}
+        {isChangeScreen ? <div> 
+            {s.map((item,i) => {
+                if (change[item]) {
+                    return <div style={{fontSize: 'calc(2vw + 2vh'}} key={i}>{change[item]}X {billCoinMap[item]} <img style={item >= 1 ? {height: '25%', width: '25%'} : {height: '10%', width: '10%'}} src={imageMap[item]}  /></div>
+                }
+            })}
+        </div> : null}
         {isCheckout ? <div>
             <table>
                 <thead>
