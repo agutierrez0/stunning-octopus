@@ -52,8 +52,8 @@ export default function Admin() {
                 <td><button disabled onClick={() => console.log("delete: ", item)}>Delete Item</button></td>
                 <td>
                     <div style={{display: 'flex', flexDirection: 'column'}}>
-                        <button onClick={() => handleSaveChanges(item)}>save changes</button>
-                        <button onClick={() => handleStopEditing(item)}>discard changes</button>
+                        <button onClick={() => handleSaveChanges(item)}>Save Changes</button>
+                        <button onClick={() => handleStopEditing(item)}>Discard Changes</button>
                     </div>
                 </td>
             </tr>
@@ -63,8 +63,8 @@ export default function Admin() {
                 <td>Apple</td>
                 <td>2</td>
                 <td>14.50</td>
-                <td><button onClick={() => console.log("delete: ", item)}>Delete Item</button></td>
-                <td><button onClick={() => handleStartEditing(item)}>start editing</button></td>
+                <td><button onClick={() => console.log("delete: ", item)}>Delete</button></td>
+                <td><button onClick={() => handleStartEditing(item)}>Edit</button></td>
             </tr>
         }
     }
@@ -75,36 +75,38 @@ export default function Admin() {
         setItemPrice("")
     }
 
-    return (<div>
-        <div className="admin-title">
-            Admin 
-        </div>
-        <h4>Update Item</h4>
+    return (<>
+    <div className="admin-container">
+        <h4>Admin Utilities</h4>
+        <h6>Update Item</h6>
         <table>
             <thead>
                 <tr>
                     <td>ID</td>
-                    <td>Item Name</td>
+                    <td>Name</td>
                     <td>Inventory Count</td>
                     <td>Price</td>
-                    <td>Delete Item</td>
+                    <td>Delete</td>
+                    <td>Edit</td>
                 </tr>
             </thead>
             <tbody>
                 {z.map((x, i) => getRowStuff(x, i))}
             </tbody>
         </table>
-        <h4>Add Item</h4>
+        
         <div className="add-item-section">
+            <h6 style={{textAlign: 'center'}}>Add Item</h6>
             <label>Name</label>
-            <input value={itemName} onChange={(event) => setItemName(event.target.value)} placeholder="apple"></input>
+            <input value={itemName} onChange={(event) => setItemName(event.target.value)} placeholder="Apples"></input>
             <label>Quantity</label>
             <input value={itemQuantity} onChange={(event) => setItemQuantity(event.target.value)} placeholder="20"></input>
             <label>Price</label>
             <input value={itemPrice} onChange={(event) => setItemPrice(event.target.value)} placeholder="$2.50"></input>
 
-            <button onClick={() => console.log({itemPrice, itemName, itemQuantity})}>add item</button>
-            <button onClick={handleClearFields}>clear fields</button>
+            <button onClick={() => console.log({itemPrice, itemName, itemQuantity})}>Add Item</button>
+            <button onClick={handleClearFields}>Clear Fields</button>
         </div>
-    </div>)
+    </div>
+    </>)
 }
