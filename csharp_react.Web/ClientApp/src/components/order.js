@@ -2,9 +2,14 @@ import React, { useEffect, useState } from 'react';
 import './css/order.css';
 
 export default function Order() {
+    const [isCheckout, setIsCheckout] = useState(false);
+    const [isChangeScreen, setIsChangeScreen] = useState(false);
+    const [isInitialScreen, setIsInitialScreen] = useState(true);
+
+
     const [items, setItems] = useState([]);
     const [currentOrder, setCurrentOrder] = useState({});
-    const [isCheckout, setIsCheckout] = useState(0);
+    
     const [orderList, setOrderList] = useState([]);
 
     const [total, setTotal] = useState(0)
@@ -12,6 +17,21 @@ export default function Order() {
     const [subTotal, setSubTotal] = useState(0)
     const [postBody, setPostBody] = useState({})
 
+    const [change, setChange] = useState()
+
+    const billCoinMap = {
+        100 : "100 dollar bill",
+        50 : "50 dollar bill",
+        20 : "20 dollar bill",
+        10 : "10 dollar bill",
+        5 : "5 dollar bill",
+        1 : "1 dollar bill",
+        .25 : "quarter",
+        .10 : "dime",
+        .05 : "nickel",
+        .01 : "penny"
+    }
+    
     function handleSelection(index, isIncrease) {
         if (index in currentOrder) {
             if (isIncrease) {
@@ -57,9 +77,7 @@ export default function Order() {
         setTax(taxAmount)
         setSubTotal(totalAmount + taxAmount)
 
-        console.log(someList)
         setOrderList(someList)
-        console.log(someOtherList)
         setPostBody(someOtherList)
         setIsCheckout(true)
     }
@@ -69,7 +87,6 @@ export default function Order() {
         const datetimeNow = new Date().toISOString()
 
         const entity = { employeeId: employeeId, time: datetimeNow, total: total.toString(), subTotal, tax, items: postBody }
-        console.log(entity)
         
         fetch("/api/transaction", {
             method: 'POST',
@@ -84,8 +101,7 @@ export default function Order() {
     }
 
     useEffect(() => {
-        //setItems([{name: 'apples', emoji: '🍎', price: 2}, {name: 'oranges', emoji: '🍊', price: 1}, {name: 'grapes', emoji: '🍇', price: 4}])
-
+        /* 
         fetch("/api/item", {
             method: 'GET',
             headers: {
@@ -98,12 +114,34 @@ export default function Order() {
             console.log(data)
             setItems(data)
         })
+        */
     }, [])
+
+
+    function calculateChange(amt, prv) {
+        amt = 25.22
+        prv = 40
+        let diff = prv - amt
+        const s = [100, 50, 20, 10, 5, 1, .25, .10, .05, .01]
+        const given = []
+        
+        for(var i = 0; i < s.length; i++) {
+            if (s[i] < diff) {
+                diff = diff - s[i]
+                given.push(s[i]);
+                i--;
+            }
+        }
+        setChange(given)
+        isCheckout(false)
+        isChangeScreen(true)
+    }
 
     return (<div className="order-container">
         <div className="order-title">
                 Order
         </div>
+        {isChangeScreen ? <div></div> : null}
         {isCheckout ? <div>
             <table>
                 <thead>
@@ -131,10 +169,14 @@ export default function Order() {
                 <p>Subtotal: ${subTotal}</p>
 
 
-                <button onClick={handleCheckout}>check out</button>
+                <button onClick={handleCheckout}>check out with credit card</button>
+
+                <label>Cash provided</label>
+                <button onClick={calculateChange}>calculate change</button>
             </div>
-        </div> :
-        <div>
+        </div> : null}
+
+        {isInitialScreen ? <div>
             <div className="order-items">
                 {items.map((item, i) => <div className="order-item">
                     {item.name}
@@ -151,7 +193,6 @@ export default function Order() {
                     </div>
                 </div>
             </div>
-        </div>
-        }
+        </div> : null}
 </div>)
 }

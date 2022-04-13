@@ -13,7 +13,6 @@ namespace csharp_react.Services.Models
         public double SubTotal { get; set; }
         public DateTime Time { get; set; }
         public int EmployeeId { get; set; }
-
         public ItemQuantity[] Items { get; set; }    
     }
 }

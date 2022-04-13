@@ -5,11 +5,11 @@ export default function Transactions() {
     const [transactions, setTransactions] = useState([])
 
     useEffect(() => {
-        // db fetch
         setTransactions([0,0,0,0,0,0,0,0])
     }, [])
 
     return (<div className="transactions-container">
+        <h4>All Transactions</h4>
         <table>
             <thead>
                 <tr>
@@ -21,8 +21,8 @@ export default function Transactions() {
             <tbody>
             
         
-        {transactions.map(t => {
-            return <tr>
+        {transactions.map((t,i) => {
+            return <tr key={i}>
                 <td>1</td>
                 <td>100$</td>
                 <td>February</td>
