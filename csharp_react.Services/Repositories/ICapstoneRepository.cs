@@ -16,5 +16,6 @@ namespace csharp_react.Services.Repositories
         Task<object> CreateNewTransaction(TransactionBody transaction);
         Task<bool> LoginUser(LoginBody body);
         Task<object> LogUserOut(int id, DateTime clockInTime);
+        Task<object> GetAllTransactions();
     }
 }

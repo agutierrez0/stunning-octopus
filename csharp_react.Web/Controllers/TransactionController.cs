@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using csharp_react.Data.Models;
+﻿using System.Threading.Tasks;
 using csharp_react.Services.Repositories;
 using csharp_react.Services.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace csharp_react.Controllers
 {
@@ -25,6 +20,12 @@ namespace csharp_react.Controllers
         {
             await _repository.CreateNewTransaction(body);
             return Ok();
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<object>> GetTransactions()
+        {
+            return await _repository.GetAllTransactions();
         }
     }
 }

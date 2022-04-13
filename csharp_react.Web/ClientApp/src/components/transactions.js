@@ -5,7 +5,15 @@ export default function Transactions() {
     const [transactions, setTransactions] = useState([])
 
     useEffect(() => {
-        setTransactions([0,0,0,0,0,0,0,0])
+        fetch("/api/transaction", {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => res.json())
+        .then(data => setTransactions(data))
     }, [])
 
     return (<div className="transactions-container">
@@ -13,19 +21,24 @@ export default function Transactions() {
         <table>
             <thead>
                 <tr>
-                    <th>UserId</th>
-                    <th>Total Amount</th>
+                    <th>Transaction ID</th>
+                    <th>Employee ID</th>
                     <th>Time</th>
+                    <th>Total</th>
+                    <th>Tax</th>
+                    <th>Subtotal</th>
                 </tr>
             </thead>
             <tbody>
             
-        
         {transactions.map((t,i) => {
             return <tr key={i}>
-                <td>1</td>
-                <td>100$</td>
-                <td>February</td>
+                <td>{t.id}</td>
+                <td>{t.employeeId}</td>
+                <td>{t.time}</td>
+                <td>${t.total}</td>
+                <td>${t.tax}</td>
+                <td>${t.subtotal}</td>
             </tr>
         })}
             </tbody>

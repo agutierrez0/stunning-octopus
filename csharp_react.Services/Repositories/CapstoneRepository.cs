@@ -47,6 +47,11 @@ namespace csharp_react.Services.Repositories
             return await _context.Items.ToListAsync();
         }
 
+        public async Task<object> GetAllTransactions()
+        {
+            return await _context.Transactions.ToListAsync();
+        }
+
         public async Task<bool> LoginUser(LoginBody body)
         {
             var matchingUser = await _context.Users.FirstOrDefaultAsync(c => c.EmployeeId == body.EmployeeId);
