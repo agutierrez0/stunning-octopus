@@ -182,8 +182,8 @@ export default function Start() {
                             0
                         </div>
 
-                        <div className="keypad-number" style={enteredPasscode.length == 4 && enteredId.length == 4 ? {backgroundColor: 'green'} : {backgroundColor: 'transparent'}} onClick={handleGo}>
-                            {enteredPasscode.length == 4 && enteredId.length == 4 ? "GO" : null}
+                        <div className="keypad-number" style={enteredPasscode.length === 4 && enteredId.length === 4 ? {backgroundColor: 'green'} : {backgroundColor: 'transparent'}} onClick={handleGo}>
+                            {enteredPasscode.length === 4 && enteredId.length === 4 ? "GO" : null}
                         </div>
                     </div>
                     

@@ -9,6 +9,7 @@ namespace csharp_react.Data.Models
     {
         public int ID { get; set; }
         public int ItemId { get; set; }
+        public int ItemQuantity { get; set; }
         public int TransactionId { get; set; }
 
         public virtual Items Item { get; set; }

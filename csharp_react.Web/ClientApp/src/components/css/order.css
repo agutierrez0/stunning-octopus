@@ -1,0 +1,43 @@
+.order-container {
+    height: 100vh;
+}
+
+.order-title {
+    height: 10vh;
+    width: 70vw;   
+    background-color: aqua;
+    font-size: calc(2vw + 2vh);
+}
+
+.order-items {
+    height: 75vh;
+    width: 65vw;
+}
+
+.order-buttons {
+    height: 15vh;
+    width: 67.5vw;
+}
+
+.order-item {
+    height: 7vh;
+    width: 25vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: solid black 1px;
+}
+
+table, td, th {  
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+  
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  th, td {
+    padding: 15px;
+}

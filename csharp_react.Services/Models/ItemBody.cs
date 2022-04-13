@@ -1,4 +1,4 @@
-﻿namespace csharp_react.Web.Models
+﻿namespace csharp_react.Services.Models
 {
     public class ItemBody
     {
