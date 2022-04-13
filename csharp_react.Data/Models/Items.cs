@@ -14,6 +14,7 @@ namespace csharp_react.Data.Models
 
         public int ID { get; set; }
         public string Name { get; set; }
+        public int Quantity { get; set; }
         public string Price { get; set; }
 
         public virtual ICollection<TransactionPurchases> TransactionPurchases { get; set; }

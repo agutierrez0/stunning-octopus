@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using csharp_react.Data.Models;
 using csharp_react.Services.Repositories;
 using csharp_react.Services.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -21,10 +20,10 @@ namespace csharp_react.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<object>> AddItem([FromBody] Items body)
+        public async Task<ActionResult<object>> AddItem([FromBody] ItemBody body)
         {
-            await _repository.AddNewItem(body);
-            return Ok();
+            var result = await _repository.AddNewItem(body);
+            return Ok(new { id = result });
         }
 
         [HttpGet]
@@ -34,9 +33,15 @@ namespace csharp_react.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<object>> UpdateItems([FromBody] Items body)
+        public async Task<ActionResult<object>> UpdateItems([FromBody] ItemBody body)
         {
             return await _repository.UpdateItem(body);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<object>> DeleteItem([FromRoute] int id)
+        {
+            return Ok(await _repository.DeleteItem(id));
         }
     }
 }

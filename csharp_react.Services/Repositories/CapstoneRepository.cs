@@ -17,11 +17,12 @@ namespace csharp_react.Services.Repositories
             _context = context;
         }
 
-        public async Task<object> AddNewItem(Items item)
+        public async Task<object> AddNewItem(ItemBody item)
         {
-            await _context.Items.AddAsync(item);
+            var newItem = new Items { Name = item.Name, Price = item.Price, Quantity = item.Quantity };
+            await _context.Items.AddAsync(newItem);
             await _context.SaveChangesAsync();
-            return true;
+            return newItem.ID;
         }
 
         public async Task<object> CreateNewTransaction(TransactionBody transaction)
@@ -38,6 +39,16 @@ namespace csharp_react.Services.Repositories
                 await _context.TransactionPurchases.AddAsync(new TransactionPurchases { ItemId = item.ItemId, TransactionId = id, ItemQuantity = item.ItemAmount });
                 await _context.SaveChangesAsync();
             }
+
+            return true;
+        }
+
+        public async Task<object> DeleteItem(int id)
+        {
+            var deletedEntity = await _context.Items.FindAsync(id);
+            _context.Items.Remove(deletedEntity);
+
+            await _context.SaveChangesAsync();
 
             return true;
         }
@@ -64,7 +75,7 @@ namespace csharp_react.Services.Repositories
             return 1;
         }
 
-        public Task<object> UpdateItem(Items item)
+        public Task<object> UpdateItem(ItemBody item)
         {
             throw new NotImplementedException();
         }

@@ -18,10 +18,6 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[Inventory]",
-         "ObjectType": 0
-      },
-      {
          "Name": "[dbo].[Items]",
          "ObjectType": 0
       },

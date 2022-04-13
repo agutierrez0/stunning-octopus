@@ -126,7 +126,6 @@ export default function Order() {
     }
 
     useEffect(() => {
-        /* 
         fetch("/api/item", {
             method: 'GET',
             headers: {
@@ -139,7 +138,6 @@ export default function Order() {
             console.log(data)
             setItems(data)
         })
-        */
     }, [])
 
 

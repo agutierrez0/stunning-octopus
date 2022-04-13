@@ -2,31 +2,12 @@ import React, { useEffect, useState } from 'react';
 import './css/admin.css';
 
 export default function Admin() {
-    const z = [5,6,7,8,9]
-    const [isEdit, setIsEdit] = useState([])
-    
+    const [items, setItems] = useState([])
     const [itemName, setItemName] = useState("")
     const [itemQuantity, setItemQuantity] = useState("")
     const [itemPrice, setItemPrice] = useState("")
 
-    function handleStartEditing(id) {
-        console.log(isEdit)
-        setIsEdit(oldList => [...oldList, id])
-    }
-
-    function handleStopEditing(id) {
-        console.log(2)
-        const someOtherList = isEdit.splice(id, 1)
-        setIsEdit(someOtherList)
-    }
-
     useEffect(() => {
-        console.log('isEdit changed: ', isEdit)
-    }, [isEdit])
-
-
-    function handleSaveChanges(body) {
-        /* 
         fetch("/api/item", {
             method: 'GET',
             headers: {
@@ -35,44 +16,43 @@ export default function Admin() {
             }
         })
         .then(res => res.json())
-        .then(data => {
-            console.log(data)
-        })
-        */
-        handleStopEditing(body)
-   }
+        .then(data => setItems(data))
+    }, [])
 
-    function getRowStuff(item, i) {
-        if (isEdit[i]) {
-            return <tr key={i}>
-                <td>{item}</td>
-                <td><input defaultValue="Apple"></input></td>
-                <td><input defaultValue="2"></input></td>
-                <td><input defaultValue="14.50"></input></td>
-                <td><button disabled onClick={() => console.log("delete: ", item)}>Delete Item</button></td>
-                <td>
-                    <div style={{display: 'flex', flexDirection: 'column'}}>
-                        <button onClick={() => handleSaveChanges(item)}>Save Changes</button>
-                        <button onClick={() => handleStopEditing(item)}>Discard Changes</button>
-                    </div>
-                </td>
-            </tr>
-        } else {
-            return <tr key={i}>
-                <td>{item}</td>
-                <td>Apple</td>
-                <td>2</td>
-                <td>14.50</td>
-                <td><button onClick={() => console.log("delete: ", item)}>Delete</button></td>
-                <td><button onClick={() => handleStartEditing(item)}>Edit</button></td>
-            </tr>
-        }
-    }
 
     function handleClearFields() {
         setItemName("")
         setItemQuantity("")
         setItemPrice("")
+    }
+
+    function handleAddNewItem() {
+        fetch("/api/item", {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name: itemName, price: itemPrice, quantity: itemQuantity })
+        })
+        .then(res => res.json())
+        .then(data => setItems(oldItems => [...oldItems, { id: data.id, name: itemName, price: itemPrice, quantity: itemQuantity}]))
+    }
+
+    function handleDelete(id) {
+        fetch("/api/item/" + id, {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => {
+            if (res.status === 200) {
+                const altList = items.filter(v => { return v.id != id; })
+                setItems(altList)
+            }
+        })
     }
 
     return (<>
@@ -87,14 +67,18 @@ export default function Admin() {
                     <td>Inventory Count</td>
                     <td>Price</td>
                     <td>Delete</td>
-                    <td>Edit</td>
                 </tr>
             </thead>
             <tbody>
-                {z.map((x, i) => getRowStuff(x, i))}
+                {items.map((x, i) => <tr key={i}>
+                    <td>{x.id}</td>
+                    <td>{x.name}</td>
+                    <td>{x.quantity}</td>
+                    <td>{x.price}</td>
+                    <td><button onClick={() =>handleDelete(x.id)}>Delete</button></td>
+                </tr>)}
             </tbody>
         </table>
-        
         <div className="add-item-section">
             <h6 style={{textAlign: 'center'}}>Add Item</h6>
             <label>Name</label>
@@ -104,7 +88,7 @@ export default function Admin() {
             <label>Price</label>
             <input value={itemPrice} onChange={(event) => setItemPrice(event.target.value)} placeholder="$2.50"></input>
 
-            <button onClick={() => console.log({itemPrice, itemName, itemQuantity})}>Add Item</button>
+            <button onClick={handleAddNewItem}>Add Item</button>
             <button onClick={handleClearFields}>Clear Fields</button>
         </div>
     </div>
