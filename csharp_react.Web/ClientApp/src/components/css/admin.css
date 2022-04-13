@@ -1,0 +1,26 @@
+.admin-title {
+    height: 10vh;
+    width: 70vw;   
+    background-color: aqua;
+    font-size: calc(2vw + 2vh);
+}
+
+table, td, th {  
+    border: 1px solid #ddd;
+    text-align: left;
+}
+  
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+  
+th, td {
+    padding: 15px;
+}
+
+.add-item-section {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+}

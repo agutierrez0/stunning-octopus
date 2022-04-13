@@ -57,9 +57,7 @@ export default function Order() {
         setTax(taxAmount)
         setSubTotal(totalAmount + taxAmount)
 
-        console.log(someList)
         setOrderList(someList)
-        console.log(someOtherList)
         setPostBody(someOtherList)
         setIsCheckout(true)
     }
@@ -69,7 +67,6 @@ export default function Order() {
         const datetimeNow = new Date().toISOString()
 
         const entity = { employeeId: employeeId, time: datetimeNow, total: total.toString(), subTotal, tax, items: postBody }
-        console.log(entity)
         
         fetch("/api/transaction", {
             method: 'POST',
@@ -84,8 +81,6 @@ export default function Order() {
     }
 
     useEffect(() => {
-        //setItems([{name: 'apples', emoji: '🍎', price: 2}, {name: 'oranges', emoji: '🍊', price: 1}, {name: 'grapes', emoji: '🍇', price: 4}])
-
         fetch("/api/item", {
             method: 'GET',
             headers: {
