@@ -2,9 +2,6 @@
 using csharp_react.Services.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace csharp_react.Services.Repositories
@@ -55,7 +52,7 @@ namespace csharp_react.Services.Repositories
                 _context.Items.Remove(deletedEntity);
                 await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch (Exception _)
             {
                 deletedEntity.Quantity = 0;
                 await _context.SaveChangesAsync();
@@ -74,10 +71,17 @@ namespace csharp_react.Services.Repositories
             return await _context.Transactions.ToListAsync();
         }
 
-        public async Task<bool> LoginUser(LoginBody body)
+        public async Task<(bool success, bool isAdmin)> LoginUser(LoginBody body)
         {
             var matchingUser = await _context.Users.FirstOrDefaultAsync(c => c.EmployeeId == body.EmployeeId);
-            return matchingUser != null && matchingUser.Passcode == body.Passcode;
+            if (matchingUser != null && matchingUser.Passcode == body.Passcode)
+            {
+                return (true, matchingUser.IsAdmin);
+            }
+            else
+            {
+                return (false, false);
+            }
         }
 
         public async Task<object> LogUserOut(int id, DateTime clockInTime)

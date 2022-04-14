@@ -19,10 +19,10 @@ namespace csharp_react.Controllers
         [HttpPost]
         public async Task<ActionResult<object>> LoginUser([FromBody] LoginBody body)
         {
-            var result = await _repository.LoginUser(body);
-            if (result)
+            var (success, isAdmin) = await _repository.LoginUser(body);
+            if (success)
             {
-                return Ok();
+                return Ok(isAdmin);
             }
             else
             {

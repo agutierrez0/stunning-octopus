@@ -1,17 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Transactions from './transactions';
 import Order from './order';
 import Admin from './admin';
 import './css/platform.css';
 
 export default function Platform() {
-    const [isAdmin, setIsAdmin] = useState(true);
+    const [isAdmin, setIsAdmin] = useState(false);
     const [selectedOption, setSelectedOption] = useState(0);
 
     function handleLogOut() {
         sessionStorage.clear()
         window.location.href = "/"
     }
+
+    useEffect(() => {
+        const checkAdmin = sessionStorage.getItem('admin')
+        if (checkAdmin === "true") setIsAdmin(true)
+    }, [])
 
     return (<div className="platform-container">
         <div className="select-panel-section">

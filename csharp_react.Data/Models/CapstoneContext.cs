@@ -39,7 +39,7 @@ namespace csharp_react.Data.Models
                     .WithMany(p => p.EmployeeHours)
                     .HasForeignKey(d => d.EmployeeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__EmployeeH__Emplo__47DBAE45");
+                    .HasConstraintName("FK__EmployeeH__Emplo__59063A47");
             });
 
             modelBuilder.Entity<Items>(entity =>
@@ -59,13 +59,13 @@ namespace csharp_react.Data.Models
                     .WithMany(p => p.TransactionPurchases)
                     .HasForeignKey(d => d.ItemId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Transacti__ItemI__4AB81AF0");
+                    .HasConstraintName("FK__Transacti__ItemI__5535A963");
 
                 entity.HasOne(d => d.Transaction)
                     .WithMany(p => p.TransactionPurchases)
                     .HasForeignKey(d => d.TransactionId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Transacti__Trans__4BAC3F29");
+                    .HasConstraintName("FK__Transacti__Trans__5629CD9C");
             });
 
             modelBuilder.Entity<Transactions>(entity =>
@@ -88,13 +88,13 @@ namespace csharp_react.Data.Models
                     .WithMany(p => p.Transactions)
                     .HasForeignKey(d => d.EmployeeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Transacti__Emplo__412EB0B6");
+                    .HasConstraintName("FK__Transacti__Emplo__52593CB8");
             });
 
             modelBuilder.Entity<Users>(entity =>
             {
                 entity.HasKey(e => e.EmployeeId)
-                    .HasName("PK__Users__7AD04F1170082D8C");
+                    .HasName("PK__Users__7AD04F11E4869BCF");
 
                 entity.Property(e => e.EmployeeId).ValueGeneratedNever();
             });
