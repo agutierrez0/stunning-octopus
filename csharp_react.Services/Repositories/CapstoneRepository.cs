@@ -52,7 +52,7 @@ namespace csharp_react.Services.Repositories
                 _context.Items.Remove(deletedEntity);
                 await _context.SaveChangesAsync();
             }
-            catch (Exception _)
+            catch (Exception)
             {
                 deletedEntity.Quantity = 0;
                 await _context.SaveChangesAsync();
