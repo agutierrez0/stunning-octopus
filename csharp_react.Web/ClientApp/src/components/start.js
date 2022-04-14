@@ -38,13 +38,20 @@ export default function Start() {
         })
         .then(res => {
             if (res.status === 200) {
-                sessionStorage.setItem('employeeId', finalId)
-                window.location.href = "/platform"
+                return res.json()
             } else {
                 setEnteredId([])
                 setEnteredPasscode([])
                 alert('invalid passcode and/or password')
                 setLoading(false)
+            }
+        })
+        .then(data => {
+            console.log({data})
+            if (data !== null) {
+                sessionStorage.setItem('admin', data)
+                sessionStorage.setItem('employeeId', finalId)
+                window.location.href = "/platform"
             }
         })
     }

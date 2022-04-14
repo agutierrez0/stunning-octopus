@@ -42,7 +42,6 @@ export default function Order() {
     const [isChangeScreen, setIsChangeScreen] = useState(false);
     const [isInitialScreen, setIsInitialScreen] = useState(true);
 
-
     const [items, setItems] = useState([]);
     const [currentOrder, setCurrentOrder] = useState({});
     
@@ -54,6 +53,8 @@ export default function Order() {
     const [postBody, setPostBody] = useState({})
 
     const [change, setChange] = useState()
+
+    const [moneyProvided, setMoneyProvided] = useState()
 
     const billCoinMap = {
         100 : "100 dollar bill",
@@ -114,8 +115,7 @@ export default function Order() {
         const someOtherList = []
         var totalAmount = 0
         for (const key in currentOrder) {
-            console.log(key)
-            const entity = { name: items[key].name, value : currentOrder[key], total : currentOrder[key] * items[key].price, price: items[key].price } 
+            const entity = { id: items[key].id, name: items[key].name, value : currentOrder[key], total : currentOrder[key] * items[key].price, price: items[key].price } 
             const simpleEntity = { itemId: items[key].id, itemAmount : currentOrder[key] }
             someList.push(entity)
             someOtherList.push(simpleEntity)
@@ -133,7 +133,7 @@ export default function Order() {
         setIsInitialScreen(false)
     }
 
-    function handleCheckout() {
+    function handleCheckout(isCash) {
         const employeeId = sessionStorage.getItem('employeeId')
         const datetimeNow = new Date().toISOString()
         const entity = { employeeId: employeeId, time: datetimeNow, total: total.toString(), subTotal, tax, items: postBody }
@@ -146,8 +146,19 @@ export default function Order() {
             },
             body: JSON.stringify(entity)
         })
-        .then(res => res)
-        .then(data => console.log(data))
+        .then(res => {
+            if (res.status === 200) {
+                var time = 3000
+                if (isCash) {
+                    calculateChange()
+                    time = 15000
+                }
+
+                setTimeout(() => {
+                    window.location.reload()
+                }, time)
+            }
+        })
     }
 
     useEffect(() => {
@@ -160,15 +171,17 @@ export default function Order() {
         })
         .then(res => res.json())
         .then(data => {
-            console.log(data)
             setItems(data)
         })
     }, [])
 
-    function calculateChange(amt, prv) {
-        amt = 25.22
-        prv = 40
+    function calculateChange() {
+        const amt = subTotal
+        const prv = moneyProvided
+        console.log(amt)
+        console.log(prv)
         let diff = prv - amt
+        console.log(diff)
         const given = []
         const obj = {}
         
@@ -188,7 +201,6 @@ export default function Order() {
             }
         }
 
-        console.log(obj)
         setChange(obj)
         setIsCheckout(false)
         setIsChangeScreen(true)
@@ -199,73 +211,84 @@ export default function Order() {
         {isChangeScreen ? <div> 
             {s.map((item,i) => {
                 if (change[item]) {
-                    return <div style={{fontSize: 'calc(2vw + 2vh'}} key={i}>{change[item]}X {billCoinMap[item]} <img style={item >= 1 ? {height: '25%', width: '25%'} : {height: '10%', width: '10%'}} src={imageMap[item]}  /></div>
+                    return <div style={{fontSize: 'calc(2vw + 2vh'}} key={i}>{change[item]}x {billCoinMap[item]} <img style={item >= 1 ? {height: '25%', width: '25%'} : {height: '10%', width: '10%'}} src={imageMap[item]} alt={billCoinMap[s[item]]}  /></div>
+                } else {
+                    return null
                 }
             })}
         </div> : null}
-        {isCheckout ? <div style={{width: '65vw'}}>
+
+        {isCheckout ? <>
             <table>
                 <thead>
                     <tr>
-                        <th>Item Name</th>
-                        <th>Quantity</th>
+                        <th>ID</th>
+                        <th>Picture</th>
+                        <th>Name</th>
                         <th>Price</th>
-                        <th>Total</th>
+                        <th>Order Quantity</th>
                     </tr>
                 </thead>
-                
-                {orderList.map(ob => 
-                    <tr>
-                        <td>{ob.name}</td>
-                        <td>{ob.value}</td>
-                        <td>{ob.price}</td>
-                        <td>{ob.total}</td>
-                    </tr>
-                )}
-            </table>
 
-            <div>
-                <p>Total: ${total}</p>
-                <p>Tax: ${tax}</p>
-                <p>Subtotal: ${subTotal}</p>
-                <button onClick={handleCheckout}>check out with credit card</button>
-                <label>Cash provided</label>
-                <button onClick={calculateChange}>calculate change</button>
-            </div>
-        </div> : null}
-
-        {isInitialScreen ? <>
-            <div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Picture</th>
-                            <th>Name</th>
-                            <th>Inventory Quantity</th>
-                            <th>Price</th>
-                            <th>Order Quantity</th>
-                            <th>Increase</th>
-                            <th>Decrease</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                    {items.map((item, i) => <tr>
+                <tbody>
+                    {orderList.map((item, i) => <tr key={i}>
                         <td>{item.id}</td>
                         <td><img src={locations[item.name]} alt={item.name} style={{height: "60%", width: "60%"}} /></td>
                         <td>{item.name}</td>
-                        <td>{item.quantity}</td>
-                        <td>{item.price}</td>
-                        <td>{getCurrentCount(i)}</td>
-                        <td><button onClick={() => handleSelection(i, true)}>Increase</button></td>
-                        <td><button onClick={() => handleSelection(i, false)}>Decrease</button></td>
+                        <td>${item.price}</td>
+                        <td>{item.value}</td>
                     </tr>)}
-                    </tbody>
-                </table>
-                <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '15px'}}>
-                    <button onClick={handleGoCheckout}>Review Order</button>
+                </tbody>
+            </table>
+            <div style={{textAlign: 'start', width: '100%'}}>
+                <p>Subtotal: ${total}</p>
+                <p>Tax: ${tax}</p>
+                <p>Total: ${subTotal}</p>
+
+                <div style={{display: 'flex', flexDirection: 'column', width: 'fit-content'}}>
+                    <label><b>Pay with credit card</b></label>
+                    <button onClick={() => handleCheckout(false)}>Credit Card</button>
+
+                    <label><b>Pay with cash</b></label>
+                    <label>Cash provided</label>
+                    <input onChange={(event) => setMoneyProvided(event.target.value)}></input>
+                    <button onClick={() => handleCheckout(true)}>Calculate Change</button>
                 </div>
+            </div>
+        </> : null}
+
+        {isInitialScreen ? <>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Picture</th>
+                        <th>Name</th>
+                        <th>Inventory Quantity</th>
+                        <th>Price</th>
+                        <th>Order Quantity</th>
+                        <th>Increase</th>
+                        <th>Decrease</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                {items.map((item, i) => {
+                if (item.quantity > 0) return <tr key={i}>
+                    <td>{item.id}</td>
+                    <td><img src={locations[item.name]} alt={item.name} style={{height: "60%", width: "60%"}} /></td>
+                    <td>{item.name}</td>
+                    <td>{item.quantity}</td>
+                    <td>${item.price}</td>
+                    <td>{getCurrentCount(i)}</td>
+                    <td><button onClick={() => handleSelection(i, true)}>Increase</button></td>
+                    <td><button onClick={() => handleSelection(i, false)}>Decrease</button></td>
+                </tr> 
+                return null})}
+                </tbody>
+            </table>
+            <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '15px'}}>
+                <button onClick={handleGoCheckout}>Review Order</button>
             </div>
         </> : null}
 </div>)

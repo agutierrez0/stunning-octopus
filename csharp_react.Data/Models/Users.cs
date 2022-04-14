@@ -15,6 +15,7 @@ namespace csharp_react.Data.Models
 
         public int EmployeeId { get; set; }
         public int Passcode { get; set; }
+        public bool IsAdmin { get; set; }
 
         public virtual ICollection<EmployeeHours> EmployeeHours { get; set; }
         public virtual ICollection<Transactions> Transactions { get; set; }

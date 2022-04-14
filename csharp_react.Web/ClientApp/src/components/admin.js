@@ -49,7 +49,7 @@ export default function Admin() {
         })
         .then(res => {
             if (res.status === 200) {
-                const altList = items.filter(v => { return v.id != id; })
+                const altList = items.filter(v => { return v.id !== id; })
                 setItems(altList)
             }
         })
@@ -70,13 +70,15 @@ export default function Admin() {
                 </tr>
             </thead>
             <tbody>
-                {items.map((x, i) => <tr key={i}>
+                {items.map((x, i) => {
+                if (x.quantity > 0) return <tr key={i}>
                     <td>{x.id}</td>
                     <td>{x.name}</td>
                     <td>{x.quantity}</td>
                     <td>{x.price}</td>
                     <td><button onClick={() =>handleDelete(x.id)}>Delete</button></td>
-                </tr>)}
+                </tr>
+            return null})}
             </tbody>
         </table>
         <div className="add-item-section">

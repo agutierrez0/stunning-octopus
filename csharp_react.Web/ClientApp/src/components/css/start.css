@@ -1,12 +1,9 @@
 .start-container {
-    height: 100vh;
-    width: 100vw;
+    height: fit-content;
 }
 
 .id-input-section,
 .passcode-input-section {
-    height: 50vh;
-    width: 100vw;
     display: flex;
     justify-content: center;
     flex-direction: column;
@@ -26,6 +23,9 @@
     height: 2vh;
     font-size: 3.5vw;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .title-section {

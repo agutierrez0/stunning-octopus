@@ -2,9 +2,6 @@
 using csharp_react.Services.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace csharp_react.Services.Repositories
@@ -38,6 +35,10 @@ namespace csharp_react.Services.Repositories
             {
                 await _context.TransactionPurchases.AddAsync(new TransactionPurchases { ItemId = item.ItemId, TransactionId = id, ItemQuantity = item.ItemAmount });
                 await _context.SaveChangesAsync();
+
+                var itemPurchased = await _context.Items.FindAsync(item.ItemId);
+                itemPurchased.Quantity -= item.ItemAmount;
+                await _context.SaveChangesAsync();
             }
 
             return true;
@@ -46,9 +47,16 @@ namespace csharp_react.Services.Repositories
         public async Task<object> DeleteItem(int id)
         {
             var deletedEntity = await _context.Items.FindAsync(id);
-            _context.Items.Remove(deletedEntity);
-
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Items.Remove(deletedEntity);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception _)
+            {
+                deletedEntity.Quantity = 0;
+                await _context.SaveChangesAsync();
+            }
 
             return true;
         }
@@ -63,10 +71,17 @@ namespace csharp_react.Services.Repositories
             return await _context.Transactions.ToListAsync();
         }
 
-        public async Task<bool> LoginUser(LoginBody body)
+        public async Task<(bool success, bool isAdmin)> LoginUser(LoginBody body)
         {
             var matchingUser = await _context.Users.FirstOrDefaultAsync(c => c.EmployeeId == body.EmployeeId);
-            return matchingUser != null && matchingUser.Passcode == body.Passcode;
+            if (matchingUser != null && matchingUser.Passcode == body.Passcode)
+            {
+                return (true, matchingUser.IsAdmin);
+            }
+            else
+            {
+                return (false, false);
+            }
         }
 
         public async Task<object> LogUserOut(int id, DateTime clockInTime)
