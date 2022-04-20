@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
 import './css/start.css';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, getDocs } from "firebase/firestore"; 
+import {firebaseConfig} from '../firebaseConfig';
+  
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 export default function Start() {
     const [loading, setLoading] = useState(false);
@@ -7,56 +13,50 @@ export default function Start() {
     const [enteredPasscode, setEnteredPasscode] = useState([])
 
     function handleNewNumber(isId, number) {
-        if (isId) {
+        if (isId && enteredId.length <= 3) {
             setEnteredId(oldArray => [...oldArray, number])
-        } else {
+        } else if (!isId && enteredPasscode.length <= 3) {
             setEnteredPasscode(oldArray => [...oldArray, number])
         }
     }
 
-    function handleBackSpace(isId) {
+    function handleClear(isId) {
         if (isId) {
-            enteredId.pop()
+            setEnteredId([])
         } else {
-            enteredPasscode.pop()
+            setEnteredPasscode([])
         }
     }
 
-    function handleGo() {
+    async function handleGo() {
         setLoading(true)
         const finalId = enteredId.join('')
         const finalPasscode = enteredPasscode.join('')
-        const item = { employeeId: finalId, passcode: finalPasscode}
-        
-        fetch("/api/login", {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(item)
-        })
-        .then(res => {
-            if (res.status === 200) {
-                return res.json()
-            } else {
-                setEnteredId([])
-                setEnteredPasscode([])
-                alert('invalid passcode and/or password')
-                setLoading(false)
-            }
-        })
-        .then(data => {
-            console.log({data})
-            if (data !== null) {
-                sessionStorage.setItem('admin', data)
+        const inputItem = { id: finalId, passcode: finalPasscode}
+
+        var successfulLogin = false
+        const querySnapshot = await getDocs(collection(db, "users"))
+        querySnapshot.forEach((item) => {
+            const user = item.data()
+            if (user.id === inputItem.id && user.passcode === inputItem.passcode) {
+                alert('successful login')
+                sessionStorage.setItem('admin', user.isAdmin)
                 sessionStorage.setItem('employeeId', finalId)
                 window.location.href = "/platform"
+                successfulLogin = true
+                return
             }
         })
+
+        if (!successfulLogin) {
+            alert('invalid passcode and/or password')
+            setEnteredId([])
+            setEnteredPasscode([])
+            setLoading(false)
+        }
     }
 
-    return loading ? <div>loading...</div> : <div className="start-container">
+    return loading ? <div className='login-container'>loading...</div> : <div className="start-container">
         <div className="id-input-section">
             <div className="title-section">
                 Employee ID
@@ -111,8 +111,8 @@ export default function Start() {
                         </div>
                     </div>
                     <div className="keypad-row">
-                        <div className="keypad-number" onClick={() => handleBackSpace(true)} style={enteredId.length > 0 ? {backgroundColor: 'red'} : {backgroundColor: 'transparent'}}>
-                            {enteredId.length > 0 ? "BACK" : null}
+                        <div className="keypad-number" onClick={() => handleClear(true)} style={enteredId.length > 0 ? {backgroundColor: 'yellow'} : {backgroundColor: 'transparent'}}>
+                            {enteredId.length > 0 ? "CLEAR" : null}
                         </div>
                         
                         <div className="keypad-number" onClick={() => handleNewNumber(true, 0)}>
@@ -181,8 +181,8 @@ export default function Start() {
                     </div>
                     <div className="keypad-row">
 
-                        <div onClick={() => handleBackSpace(false)} className="keypad-number" style={enteredPasscode.length > 0 ? {backgroundColor: 'red'} : {backgroundColor: 'transparent'}}>
-                            {enteredPasscode.length > 0 ? "BACK" : null}
+                        <div onClick={() => handleClear(false)} className="keypad-number" style={enteredPasscode.length > 0 ? {backgroundColor: 'yellow'} : {backgroundColor: 'transparent'}}>
+                            {enteredPasscode.length > 0 ? "CLEAR" : null}
                         </div>
                         
                         <div className="keypad-number" onClick={() => handleNewNumber(false, 0)}>
@@ -193,7 +193,6 @@ export default function Start() {
                             {enteredPasscode.length === 4 && enteredId.length === 4 ? "GO" : null}
                         </div>
                     </div>
-                    
                 </div>
             </div>
         </div>

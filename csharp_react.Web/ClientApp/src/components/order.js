@@ -23,6 +23,27 @@ import muffins from '../item_pics/muffins.jpeg';
 import sodaBottle from '../item_pics/soda_bottle.jpeg';
 import sodaCan from '../item_pics/soda_can.jpeg';
 
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore"; 
+// Follow this pattern to import other Firebase services
+// import { } from 'firebase/<service>';
+
+// TODO: Replace the following with your app's Firebase project configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyD0aZ1nTraL-Z7ZHiBPr_QpYCqGYKW0_0I",
+    authDomain: "agutierrezsite.firebaseapp.com",
+    databaseURL: "https://agutierrezsite.firebaseio.com",
+    projectId: "agutierrezsite",
+    storageBucket: "agutierrezsite.appspot.com",
+    messagingSenderId: "551405246921",
+    appId: "1:551405246921:web:1b5908616fb91b3ceaf018",
+    measurementId: "G-MBSS92VZXM"
+  };
+  
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 const locations = {
     chips,
     "chocolate cake" : chocolateCake,
@@ -133,11 +154,30 @@ export default function Order() {
         setIsInitialScreen(false)
     }
 
-    function handleCheckout(isCash) {
+    async function handleCheckout(isCash) {
         const employeeId = sessionStorage.getItem('employeeId')
         const datetimeNow = new Date().toISOString()
         const entity = { employeeId: employeeId, time: datetimeNow, total: total.toString(), subTotal, tax, items: postBody }
         
+        try {
+            const docRef = await addDoc(collection(db, "transactions"), entity);
+            console.log("Document written with ID: ", docRef.id);
+
+            var time = 3000
+            if (isCash) {
+                calculateChange()
+                time = 15000
+            }
+
+            setTimeout(() => {
+                window.location.reload()
+            }, time)
+        } catch (e) {
+            console.error("Error adding document: ", e);
+        }
+
+        /* 
+
         fetch("/api/transaction", {
             method: 'POST',
             headers: {
@@ -159,9 +199,26 @@ export default function Order() {
                 }, time)
             }
         })
+        */
     }
 
     useEffect(() => {
+        async function getItems() {
+            const querySnapshot = await getDocs(collection(db, "items"))
+            const allItems = []
+            querySnapshot.forEach((item) => {
+                console.log(item.data())
+                allItems.push(item.data())
+                setItems(oldList => [...oldList, item.data()])
+            })
+
+            console.log(allItems)
+            setItems(allItems)
+        }
+
+        getItems()
+        /* 
+
         fetch("/api/item", {
             method: 'GET',
             headers: {
@@ -173,6 +230,7 @@ export default function Order() {
         .then(data => {
             setItems(data)
         })
+        */
     }, [])
 
     function calculateChange() {
@@ -229,7 +287,6 @@ export default function Order() {
                         <th>Order Quantity</th>
                     </tr>
                 </thead>
-
                 <tbody>
                     {orderList.map((item, i) => <tr key={i}>
                         <td>{item.id}</td>
@@ -274,6 +331,8 @@ export default function Order() {
                 <tbody>
 
                 {items.map((item, i) => {
+                    console.log(1)
+                    console.log(item)
                 if (item.quantity > 0) return <tr key={i}>
                     <td>{item.id}</td>
                     <td><img src={locations[item.name]} alt={item.name} style={{height: "60%", width: "60%"}} /></td>
