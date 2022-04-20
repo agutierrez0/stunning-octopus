@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from 'react';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, getDocs } from "firebase/firestore"; 
+import { firebaseConfig } from '../firebaseConfig';
 import './css/transactions.css';
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 export default function Transactions() {
     const [transactions, setTransactions] = useState([])
 
     useEffect(() => {
-        fetch("/api/transaction", {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(res => res.json())
-        .then(data => setTransactions(data))
+        async function getTransactions() {
+            const querySnapshot = await getDocs(collection(db, "transactions"))
+            querySnapshot.forEach((item) => setTransactions(z => [...z, item.data()]))
+        }
+
+        getTransactions()
     }, [])
 
     return (<div className="transactions-container">
@@ -21,7 +24,6 @@ export default function Transactions() {
         <table>
             <thead>
                 <tr>
-                    <th>Transaction ID</th>
                     <th>Employee ID</th>
                     <th>Time</th>
                     <th>Subtotal</th>
@@ -31,16 +33,15 @@ export default function Transactions() {
             </thead>
             <tbody>
             
-        {transactions.map((t,i) => {
+            {transactions.map((t,i) => {
             return <tr key={i}>
-                <td>{t.id}</td>
-                <td>{t.employeeId}</td>
-                <td>{t.time}</td>
-                <td>${t.total}</td>
-                <td>${t.tax}</td>
-                <td>${t.subtotal}</td>
-            </tr>
-        })}
+                    <td>{t.employeeId}</td>
+                    <td>{t.time.toString()}</td>
+                    <td>${t.total}</td>
+                    <td>${t.tax}</td>
+                    <td>${t.subTotal}</td>
+                </tr>
+            })}
             </tbody>
         </table>
     </div>)

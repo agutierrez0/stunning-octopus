@@ -42,6 +42,7 @@
     align-items: center;
     text-align: center;
     cursor: pointer;
+    user-select: none;
 }
 
 .keypad-section {
@@ -64,4 +65,11 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }

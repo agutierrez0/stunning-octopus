@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc } from "firebase/firestore"; 
+import { firebaseConfig } from '../firebaseConfig';
 import './css/admin.css';
+  
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 export default function Admin() {
     const [items, setItems] = useState([])
@@ -8,17 +14,19 @@ export default function Admin() {
     const [itemPrice, setItemPrice] = useState("")
 
     useEffect(() => {
-        fetch("/api/item", {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(res => res.json())
-        .then(data => setItems(data))
+        async function getItems() {
+            const querySnapshot = await getDocs(collection(db, "items"))
+            const allItems = []
+            querySnapshot.forEach((item) => {
+                const itemInfo = item.data()
+                itemInfo['dbId'] = item.id
+                allItems.push(itemInfo)
+                setItems(oldList => [...oldList, itemInfo])
+            })
+            setItems(allItems)
+        }
+        getItems()
     }, [])
-
 
     function handleClearFields() {
         setItemName("")
@@ -26,33 +34,19 @@ export default function Admin() {
         setItemPrice("")
     }
 
-    function handleAddNewItem() {
-        fetch("/api/item", {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ name: itemName, price: itemPrice, quantity: itemQuantity })
-        })
-        .then(res => res.json())
-        .then(data => setItems(oldItems => [...oldItems, { id: data.id, name: itemName, price: itemPrice, quantity: itemQuantity}]))
+    async function handleAddNewItem() {
+        const entity = { name: itemName, price: itemPrice, quantity: itemQuantity }
+        const newItemRef = doc(collection(db, "items"));
+        await setDoc(newItemRef, entity);
+        entity['dbId'] = newItemRef.id;
+        setItems(oldItems => [...oldItems, entity])
+        handleClearFields()
     }
 
-    function handleDelete(id) {
-        fetch("/api/item/" + id, {
-            method: 'DELETE',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(res => {
-            if (res.status === 200) {
-                const altList = items.filter(v => { return v.id !== id; })
-                setItems(altList)
-            }
-        })
+    async function handleDelete(id) {
+        await deleteDoc(doc(db, "items", id));
+        const altList = items.filter(v => { return v.dbId !== id; })
+        setItems(altList)
     }
 
     return (<>
@@ -62,7 +56,6 @@ export default function Admin() {
         <table>
             <thead>
                 <tr>
-                    <td>ID</td>
                     <td>Name</td>
                     <td>Inventory Count</td>
                     <td>Price</td>
@@ -72,11 +65,10 @@ export default function Admin() {
             <tbody>
                 {items.map((x, i) => {
                 if (x.quantity > 0) return <tr key={i}>
-                    <td>{x.id}</td>
                     <td>{x.name}</td>
                     <td>{x.quantity}</td>
                     <td>{x.price}</td>
-                    <td><button onClick={() =>handleDelete(x.id)}>Delete</button></td>
+                    <td><button onClick={() =>handleDelete(x.dbId)}>Delete</button></td>
                 </tr>
             return null})}
             </tbody>

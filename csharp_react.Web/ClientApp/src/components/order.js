@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './css/order.css';
+
 import penny from '../change_pics/penny.png';
 import nickel from '../change_pics/nickel.png';
 import dime from '../change_pics/dime.png';
@@ -23,6 +24,13 @@ import muffins from '../item_pics/muffins.jpeg';
 import sodaBottle from '../item_pics/soda_bottle.jpeg';
 import sodaCan from '../item_pics/soda_can.jpeg';
 
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc } from "firebase/firestore"; 
+import { firebaseConfig } from '../firebaseConfig';
+  
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 const locations = {
     chips,
     "chocolate cake" : chocolateCake,
@@ -41,47 +49,28 @@ export default function Order() {
     const [isCheckout, setIsCheckout] = useState(false);
     const [isChangeScreen, setIsChangeScreen] = useState(false);
     const [isInitialScreen, setIsInitialScreen] = useState(true);
-
     const [items, setItems] = useState([]);
     const [currentOrder, setCurrentOrder] = useState({});
-    
     const [orderList, setOrderList] = useState([]);
-
     const [total, setTotal] = useState(0)
     const [tax, setTax] = useState(0)
     const [subTotal, setSubTotal] = useState(0)
     const [postBody, setPostBody] = useState({})
-
     const [change, setChange] = useState()
-
     const [moneyProvided, setMoneyProvided] = useState()
 
     const billCoinMap = {
-        100 : "100 dollar bill",
-        50 : "50 dollar bill",
-        20 : "20 dollar bill",
-        10 : "10 dollar bill",
-        5 : "5 dollar bill",
-        1 : "1 dollar bill",
-        .25 : "quarter",
-        .10 : "dime",
-        .05 : "nickel",
-        .01 : "penny"
+        100 : ["100 dollar bill", dollar100],
+        50 : ["50 dollar bill", dollar50],
+        20 : ["20 dollar bill", dollar20],
+        10 : ["10 dollar bill", dollar10],
+        5 : ["5 dollar bill", dollar5],
+        1 : ["1 dollar bill", dollar1],
+        0.25 : ["quarter", quarter],
+        0.10 : ["dime", dime],
+        0.05 : ["nickel", nickel],
+        0.01 : ["penny", penny]
     }
-
-    const imageMap = {
-        100 : dollar100,
-        50 : dollar50,
-        20 : dollar20,
-        10 : dollar10,
-        5 : dollar5,
-        1 : dollar1,
-        .25 : quarter,
-        .10 : dime,
-        .05 : nickel,
-        .01 : penny
-    }
-
     const s = [100, 50, 20, 10, 5, 1, .25, .10, .05, .01]
     
     function handleSelection(index, isIncrease) {
@@ -115,8 +104,8 @@ export default function Order() {
         const someOtherList = []
         var totalAmount = 0
         for (const key in currentOrder) {
-            const entity = { id: items[key].id, name: items[key].name, value : currentOrder[key], total : currentOrder[key] * items[key].price, price: items[key].price } 
-            const simpleEntity = { itemId: items[key].id, itemAmount : currentOrder[key] }
+            const entity = { name: items[key].name, value : currentOrder[key], total : currentOrder[key] * items[key].price, price: items[key].price } 
+            const simpleEntity = { itemAmount : currentOrder[key], dbId: items[key].dbId }
             someList.push(entity)
             someOtherList.push(simpleEntity)
             totalAmount = totalAmount + entity.total
@@ -133,57 +122,54 @@ export default function Order() {
         setIsInitialScreen(false)
     }
 
-    function handleCheckout(isCash) {
+    async function handleCheckout(isCash) {
         const employeeId = sessionStorage.getItem('employeeId')
         const datetimeNow = new Date().toISOString()
-        const entity = { employeeId: employeeId, time: datetimeNow, total: total.toString(), subTotal, tax, items: postBody }
+        const entity = { employeeId: employeeId, time: datetimeNow, total: total, subTotal, tax, items: postBody }
         
-        fetch("/api/transaction", {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(entity)
-        })
-        .then(res => {
-            if (res.status === 200) {
-                var time = 3000
-                if (isCash) {
-                    calculateChange()
-                    time = 15000
-                }
+        try {
+            await addDoc(collection(db, "transactions"), entity);
+            for (const thing of postBody) {
+                const itemRef = doc(db, 'items', thing.dbId)
+                const itemSnap = await getDoc(itemRef)
+                const dbInfo = itemSnap.data()
 
-                setTimeout(() => {
-                    window.location.reload()
-                }, time)
+                await updateDoc(itemRef, { quantity: dbInfo['quantity'] - thing.itemAmount })
             }
-        })
+
+            var time = 3000
+            if (isCash) {
+                calculateChange()
+                time = 15000
+            }
+
+            setTimeout(() => {
+                window.location.reload()
+            }, time)
+        } catch (e) {
+            console.error("Error adding document: ", e);
+        }
     }
 
     useEffect(() => {
-        fetch("/api/item", {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
-            setItems(data)
-        })
+        async function getItems() {
+            const querySnapshot = await getDocs(collection(db, "items"))
+            const allItems = []
+            querySnapshot.forEach((item) => {
+                const itemInfo = item.data()
+                itemInfo['dbId'] = item.id
+                allItems.push(itemInfo)
+                setItems(oldList => [...oldList, itemInfo])
+            })
+            setItems(allItems)
+        }
+        getItems()
     }, [])
 
     function calculateChange() {
-        const amt = subTotal
-        const prv = moneyProvided
-        console.log(amt)
-        console.log(prv)
-        let diff = prv - amt
-        console.log(diff)
         const given = []
         const obj = {}
+        let diff = moneyProvided - subTotal
         
         for(var i = 0; i < s.length; i++) {
             if (s[i] < diff) {
@@ -210,8 +196,11 @@ export default function Order() {
         <h4>Order</h4>
         {isChangeScreen ? <div> 
             {s.map((item,i) => {
+                
                 if (change[item]) {
-                    return <div style={{fontSize: 'calc(2vw + 2vh'}} key={i}>{change[item]}x {billCoinMap[item]} <img style={item >= 1 ? {height: '25%', width: '25%'} : {height: '10%', width: '10%'}} src={imageMap[item]} alt={billCoinMap[s[item]]}  /></div>
+                    return <div style={{fontSize: 'calc(2vw + 2vh'}} key={i}>{change[item]}x {billCoinMap[item][0]} 
+                                <img style={item >= 1 ? {height: '25%', width: '25%'} : {height: '10%', width: '10%'}} src={billCoinMap[item][1]} alt={billCoinMap[item][0]}  />
+                            </div>
                 } else {
                     return null
                 }
@@ -222,17 +211,14 @@ export default function Order() {
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Picture</th>
                         <th>Name</th>
                         <th>Price</th>
                         <th>Order Quantity</th>
                     </tr>
                 </thead>
-
                 <tbody>
                     {orderList.map((item, i) => <tr key={i}>
-                        <td>{item.id}</td>
                         <td><img src={locations[item.name]} alt={item.name} style={{height: "60%", width: "60%"}} /></td>
                         <td>{item.name}</td>
                         <td>${item.price}</td>
@@ -261,12 +247,11 @@ export default function Order() {
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Picture</th>
                         <th>Name</th>
                         <th>Inventory Quantity</th>
                         <th>Price</th>
-                        <th>Order Quantity</th>
+                        <th>Order Amount</th>
                         <th>Increase</th>
                         <th>Decrease</th>
                     </tr>
@@ -275,7 +260,6 @@ export default function Order() {
 
                 {items.map((item, i) => {
                 if (item.quantity > 0) return <tr key={i}>
-                    <td>{item.id}</td>
                     <td><img src={locations[item.name]} alt={item.name} style={{height: "60%", width: "60%"}} /></td>
                     <td>{item.name}</td>
                     <td>{item.quantity}</td>
@@ -291,5 +275,5 @@ export default function Order() {
                 <button onClick={handleGoCheckout}>Review Order</button>
             </div>
         </> : null}
-</div>)
+    </div>)
 }
