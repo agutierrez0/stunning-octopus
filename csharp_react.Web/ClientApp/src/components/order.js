@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './css/order.css';
+
 import penny from '../change_pics/penny.png';
 import nickel from '../change_pics/nickel.png';
 import dime from '../change_pics/dime.png';
@@ -253,7 +254,7 @@ export default function Order() {
                         <th>Name</th>
                         <th>Inventory Quantity</th>
                         <th>Price</th>
-                        <th>Order Quantity</th>
+                        <th>Order Amount</th>
                         <th>Increase</th>
                         <th>Decrease</th>
                     </tr>
