@@ -104,8 +104,8 @@ export default function Order() {
         const someOtherList = []
         var totalAmount = 0
         for (const key in currentOrder) {
-            const entity = { id: items[key].id, name: items[key].name, value : currentOrder[key], total : currentOrder[key] * items[key].price, price: items[key].price } 
-            const simpleEntity = { itemId: items[key].id, itemAmount : currentOrder[key], dbId: items[key].dbId }
+            const entity = { name: items[key].name, value : currentOrder[key], total : currentOrder[key] * items[key].price, price: items[key].price } 
+            const simpleEntity = { itemAmount : currentOrder[key], dbId: items[key].dbId }
             someList.push(entity)
             someOtherList.push(simpleEntity)
             totalAmount = totalAmount + entity.total
@@ -211,7 +211,6 @@ export default function Order() {
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Picture</th>
                         <th>Name</th>
                         <th>Price</th>
@@ -220,7 +219,6 @@ export default function Order() {
                 </thead>
                 <tbody>
                     {orderList.map((item, i) => <tr key={i}>
-                        <td>{item.id}</td>
                         <td><img src={locations[item.name]} alt={item.name} style={{height: "60%", width: "60%"}} /></td>
                         <td>{item.name}</td>
                         <td>${item.price}</td>
@@ -249,7 +247,6 @@ export default function Order() {
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Picture</th>
                         <th>Name</th>
                         <th>Inventory Quantity</th>
@@ -263,7 +260,6 @@ export default function Order() {
 
                 {items.map((item, i) => {
                 if (item.quantity > 0) return <tr key={i}>
-                    <td>{item.id}</td>
                     <td><img src={locations[item.name]} alt={item.name} style={{height: "60%", width: "60%"}} /></td>
                     <td>{item.name}</td>
                     <td>{item.quantity}</td>
