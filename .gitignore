@@ -5,3 +5,6 @@
 /csharp_react.Data/obj/
 
 /node_modules
+/build
+
+.netlify
