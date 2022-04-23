@@ -12,8 +12,13 @@ export default function Transactions() {
 
     useEffect(() => {
         async function getTransactions() {
+            var beforeTime = new Date()
             const querySnapshot = await getDocs(collection(db, "transactions"))
             querySnapshot.forEach((item) => setTransactions(z => [...z, item.data()]))
+            var afterTime = new Date()
+
+            const total =  afterTime.getMilliseconds() - beforeTime.getMilliseconds()
+            console.log(total)
         }
 
         getTransactions()
