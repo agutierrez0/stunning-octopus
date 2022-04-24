@@ -57,7 +57,7 @@ export default function Order() {
     const [subTotal, setSubTotal] = useState(0)
     const [postBody, setPostBody] = useState({})
     const [change, setChange] = useState()
-    const [moneyProvided, setMoneyProvided] = useState()
+    const [moneyProvided, setMoneyProvided] = useState(0)
 
     const billCoinMap = {
         100 : ["100 dollar bill", dollar100],
@@ -231,14 +231,24 @@ export default function Order() {
                 <p>Tax: ${tax}</p>
                 <p>Total: ${subTotal}</p>
 
-                <div style={{display: 'flex', flexDirection: 'column', width: 'fit-content'}}>
+                <div style={{display: 'flex', flexDirection: 'column', width: '100%'}}>
                     <label><b>Pay with credit card</b></label>
-                    <button onClick={() => handleCheckout(false)}>Credit Card</button>
+                    <button style={{maxWidth: 300}} onClick={() => handleCheckout(false)}>Credit Card</button>
+
 
                     <label><b>Pay with cash</b></label>
-                    <label>Cash provided</label>
-                    <input onChange={(event) => setMoneyProvided(event.target.value)}></input>
-                    <button onClick={() => handleCheckout(true)}>Calculate Change</button>
+                    <div className='cash-grid'>
+                        {s.map((item, i) => {
+                            const info = billCoinMap[item]
+                            return <div style={{cursor: 'pointer'}} key={i} onClick={() => setMoneyProvided(item + moneyProvided)} >
+                                <img style={item >= 1 ? {height: '100%', width: '100%'} : {height: '75%', width: '75%'}} src={info[1]} alt={info[0]} />
+                            </div>
+                        })}
+                    </div>
+                    
+                    <label>Cash tendered: {moneyProvided}</label>
+                    <button style={{maxWidth: 300}} onClick={() => setMoneyProvided(0)}>Clear cash tendered</button>
+                    <button style={{maxWidth: 300}} onClick={() => handleCheckout(true)}>Calculate Change</button>
                 </div>
             </div>
         </> : null}

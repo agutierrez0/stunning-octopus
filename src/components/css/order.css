@@ -19,3 +19,11 @@ th, td {
     padding: 15px;
     width: fit-content;
 }
+
+.cash-grid {
+    display: grid;
+    align-items: center;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 20px;
+    column-gap: 20px;
+}
