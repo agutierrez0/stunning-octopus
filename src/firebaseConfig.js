@@ -1,10 +1,10 @@
 export const firebaseConfig = {
-    apiKey: "AIzaSyD0aZ1nTraL-Z7ZHiBPr_QpYCqGYKW0_0I",
-    authDomain: "agutierrezsite.firebaseapp.com",
-    databaseURL: "https://agutierrezsite.firebaseio.com",
-    projectId: "agutierrezsite",
-    storageBucket: "agutierrezsite.appspot.com",
-    messagingSenderId: "551405246921",
-    appId: "1:551405246921:web:1b5908616fb91b3ceaf018",
-    measurementId: "G-MBSS92VZXM"
+    apiKey: process.env.REACT_APP_FIREBASE_APIKEY,
+    authDomain: process.env.REACT_APP_FIREBASE_AUTHDOMAIN,
+    databaseURL: process.env.REACT_APP_FIREBASE_DATABASEURL,
+    projectId: process.env.REACT_APP_FIREBASE_PROJECTID,
+    storageBucket: process.env.REACT_APP_FIREBASE_STORAGEBUCKET,
+    messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGINGID,
+    appId: process.env.REACT_APP_FIREBASE_APPID,
+    measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENTID
 };
