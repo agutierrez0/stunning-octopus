@@ -32,6 +32,7 @@ export default function Transactions() {
                     <th>Subtotal</th>
                     <th>Tax</th>
                     <th>Total</th>
+                    <th>View</th>
                 </tr>
             </thead>
             <tbody>
@@ -43,6 +44,7 @@ export default function Transactions() {
                     <td>${t.total}</td>
                     <td>${t.tax}</td>
                     <td>${t.subTotal}</td>
+                    <td><button>View</button></td>
                 </tr>
             })}
             </tbody>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Route, Routes } from 'react-router-dom';
 import Transactions from './transactions';
 import Order from './order';
 import Admin from './admin';
@@ -6,7 +7,6 @@ import './css/platform.css';
 
 export default function Platform() {
     const [isAdmin, setIsAdmin] = useState(false);
-    const [selectedOption, setSelectedOption] = useState(0);
 
     function handleLogOut() {
         sessionStorage.clear()
@@ -20,23 +20,28 @@ export default function Platform() {
 
     return (<div className="platform-container">
         <div className="select-panel-section">
-            <div onClick={() => setSelectedOption(0)} className="panel-option">
+            <div onClick={() => window.location.href = "/platform/order"} className="panel-option">
                 Order
             </div>
-            <div onClick={() => setSelectedOption(1)} className="panel-option">
+            <div onClick={() => window.location.href = "/platform/transactions"} className="panel-option">
                 Transactions
             </div>
+            {isAdmin ? <div onClick={() => window.location.href = "/platform/admin"} className="panel-option" style={{backgroundColor: 'yellow'}}>
+                Admin
+            </div> : null}
             <div onClick={handleLogOut} className="panel-option" style={{backgroundColor: 'red'}}>
                 Log Out
             </div>
-            {isAdmin ? <div onClick={() => setSelectedOption(2)} className="panel-option" style={{backgroundColor: 'yellow'}}>
-                Admin
-            </div> : null}
         </div>
         <div className="panel-section">
-            {selectedOption === 0 ? <Order /> : null}
-            {selectedOption === 1 ? <Transactions /> : null}
-            {selectedOption === 2 ? <Admin /> : null}
+            <Routes>
+                <Route path=''>
+                    <Route path='' element={<Order />} />
+                    <Route path='order' element={<Order />} />
+                    <Route path='transactions' element={<Transactions />} />
+                    <Route path='admin' element={<Admin />} />
+                </Route>
+            </Routes>
         </div>
     </div>)
 }

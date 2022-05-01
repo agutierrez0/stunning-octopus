@@ -8,7 +8,7 @@ export default function App() {
   return (
     <Routes>
       <Route index element={<Start />} />
-      <Route path='/platform' element={<Platform />} />
+      <Route path='/platform/*' element={<Platform />} />
     </Routes>
   );
 };
