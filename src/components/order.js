@@ -275,8 +275,8 @@ export default function Order() {
                     <td>{item.quantity}</td>
                     <td>${item.price}</td>
                     <td>{getCurrentCount(i)}</td>
-                    <td><button onClick={() => handleSelection(i, true)}>Increase</button></td>
-                    <td><button onClick={() => handleSelection(i, false)}>Decrease</button></td>
+                    <td><button onClick={() => handleSelection(i, true)}>+</button></td>
+                    <td><button onClick={() => handleSelection(i, false)}>-</button></td>
                 </tr> 
                 return null})}
                 </tbody>
