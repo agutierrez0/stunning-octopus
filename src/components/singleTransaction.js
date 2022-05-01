@@ -66,9 +66,9 @@ export default function SingleTransaction() {
 
         <label>Employee ID: {employeeId}</label>
         <label>Time: {time}</label>
-        <label>Subtotal: {subTotal}</label>
-        <label>Tax: {tax}</label>
-        <label>Total: {total}</label>
+        <label>Subtotal: ${total}</label>
+        <label>Tax: ${tax}</label>
+        <label>Total: ${subTotal}</label>
 
         <label>Items</label>
         <table>
