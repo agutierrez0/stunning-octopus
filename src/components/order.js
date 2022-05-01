@@ -31,7 +31,7 @@ import { firebaseConfig } from '../firebaseConfig';
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const locations = {
+export const locations = {
     chips,
     "chocolate cake" : chocolateCake,
     chocolate,

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Transactions from './transactions';
+import SingleTransaction from './singleTransaction';
 import Order from './order';
 import Admin from './admin';
 import './css/platform.css';
@@ -38,7 +39,12 @@ export default function Platform() {
                 <Route path=''>
                     <Route path='' element={<Order />} />
                     <Route path='order' element={<Order />} />
-                    <Route path='transactions' element={<Transactions />} />
+                    <Route path='transactions'>
+                        <Route path='' element={<Transactions />} />
+                        <Route path=':id' element={<SingleTransaction />} />
+                    </Route>
+
+                    
                     <Route path='admin' element={<Admin />} />
                 </Route>
             </Routes>

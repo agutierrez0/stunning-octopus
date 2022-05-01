@@ -15,6 +15,7 @@ export default function Transactions() {
             const querySnapshot = await getDocs(collection(db, "transactions"))
             querySnapshot.forEach((item) => {
                 const itemInfo = item.data()
+                itemInfo['dbId'] = item.id
                 itemInfo['niceTime'] = new Date(itemInfo.time)
                 setTransactions(z => [...z, itemInfo])
             })
@@ -44,7 +45,7 @@ export default function Transactions() {
                     <td>${t.total}</td>
                     <td>${t.tax}</td>
                     <td>${t.subTotal}</td>
-                    <td><button>View</button></td>
+                    <td><button onClick={() => window.location.href = `/platform/transactions/${t.dbId}`}>View</button></td>
                 </tr>
             })}
             </tbody>
