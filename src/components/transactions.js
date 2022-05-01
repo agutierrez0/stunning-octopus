@@ -12,15 +12,13 @@ export default function Transactions() {
 
     useEffect(() => {
         async function getTransactions() {
-            var beforeTime = new Date()
             const querySnapshot = await getDocs(collection(db, "transactions"))
-            querySnapshot.forEach((item) => setTransactions(z => [...z, item.data()]))
-            var afterTime = new Date()
-
-            const total =  afterTime.getMilliseconds() - beforeTime.getMilliseconds()
-            console.log(total)
+            querySnapshot.forEach((item) => {
+                const itemInfo = item.data()
+                itemInfo['niceTime'] = new Date(itemInfo.time)
+                setTransactions(z => [...z, itemInfo])
+            })
         }
-
         getTransactions()
     }, [])
 
@@ -37,11 +35,11 @@ export default function Transactions() {
                 </tr>
             </thead>
             <tbody>
-            
-            {transactions.map((t,i) => {
+
+            {transactions.sort((a,b) => a.niceTime.getTime() - b.niceTime.getTime()).reverse().map((t,i) => {
             return <tr key={i}>
                     <td>{t.employeeId}</td>
-                    <td>{t.time.toString()}</td>
+                    <td>{t.niceTime.toUTCString()}</td>
                     <td>${t.total}</td>
                     <td>${t.tax}</td>
                     <td>${t.subTotal}</td>
